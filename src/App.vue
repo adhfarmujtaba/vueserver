@@ -2,7 +2,7 @@
   <div id="app">
     <SidebarComponent :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
     <div class="content-wrapper" :class="{ 'shifted': isMenuOpen }">
-      <Header v-if="!isNotificationPage" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
+      <Header v-if="!isLoginPage" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
       <main>
         <transition name="slide-down-up" mode="out-in" appear>
           <router-view :key="$route.fullPath" />
@@ -30,13 +30,11 @@ export default {
     return {
       isMenuOpen: false,
       isPulling: false,
-      isNotificationPage: false, // New property
     };
   },
-  watch: {
-    $route(to) {
-      // Set isNotificationPage based on route name or path
-      this.isNotificationPage = to.name === 'notifications'; // Adjust this condition as needed
+  computed: {
+    isLoginPage() {
+      return this.$route.name === 'Login'; // Check if the current route is the login page
     },
   },
   methods: {
