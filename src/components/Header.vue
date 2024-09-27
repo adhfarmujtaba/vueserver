@@ -16,15 +16,33 @@
       </router-link>
       <div class="icons">
         <div class="icon notification-icon" @click="handleNotificationClick">
-  <i class="fas fa-bell"></i>
-  <span v-if="unreadCount > 0" class="unread-count">{{ unreadCount }}</span>
-</div>
+          <i class="fas fa-bell"></i>
+          <span v-if="unreadCount > 0" class="unread-count">{{ unreadCount }}</span>
+        </div>
 
         <div class="icon" @click="openSearchModal">
           <i class="fas fa-search"></i>
         </div>
-        <div class="icon" @click="handleUserClick">
+        <div class="icon user-icon" @click="toggleUserDropdown">
           <i class="fas fa-user"></i>
+          <div v-if="showUserDropdown" class="dropdown">
+            <template v-if="user">
+              <router-link to="/profile" class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+              </router-link>
+              <router-link to="/settings" class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+              </router-link>
+              <a href="#" class="dropdown-item" @click="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </template>
+            <template v-else>
+              <router-link to="/login" class="dropdown-item">
+                <i class="fas fa-sign-in-alt"></i> Login
+              </router-link>
+            </template>
+          </div>
         </div>
       </div>
     </header>
@@ -130,11 +148,15 @@ export default {
     hasMoreResults: true, // To check if more results are available
     unreadCount: 0,
     unreadCountInterval: null,
+     showUserDropdown: false,
   };
 },
 
   computed: {
     ...mapState(['currentRoute']),
+     user() {
+      return JSON.parse(localStorage.getItem("user"));
+    }
   },
   methods: {
     toggleMenu() {
@@ -147,6 +169,14 @@ export default {
     handleUserClick() {},
     openSearchModal() {
       this.isSearching = true;
+    },
+    toggleUserDropdown() {
+      this.showUserDropdown = !this.showUserDropdown;
+    },
+     async logout() {
+      localStorage.removeItem("user");
+      this.showUserDropdown = false;
+      this.$router.push("/login"); // Redirect to login after logout
     },
     closeSearchModal() {
       this.isSearching = false;
@@ -562,5 +592,77 @@ input:focus {
   font-size: 12px;
   font-weight: bold;
 }
+.dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 15px;
+  opacity: 0; /* Start invisible */
+  transform: translateY(-10px); /* Move slightly up */
+  transition: opacity 0.2s ease, transform 0.2s ease; /* Animation */
+  animation: fadeInSlideDown 0.3s forwards; /* Add animation */
+}
 
+@keyframes fadeInSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  padding: 10px 20px; /* Slightly more padding */
+  text-decoration: none;
+  color: #333;
+  border-radius: 5px; /* Rounded corners for items */
+  opacity: 0; /* Start items invisible */
+  transform: translateY(-10px); /* Move items slightly up */
+  transition: opacity 0.2s ease, transform 0.2s ease; /* Smooth transition for items */
+}
+
+.dropdown-item:nth-child(1) {
+  animation: fadeIn 0.3s forwards 0.1s; /* Delay for first item */
+}
+
+.dropdown-item:nth-child(2) {
+  animation: fadeIn 0.3s forwards 0.2s; /* Delay for second item */
+}
+
+.dropdown-item:nth-child(3) {
+  animation: fadeIn 0.3s forwards 0.3s; /* Delay for third item */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item i {
+  margin-right: 10px;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+  transition: background 0.2s ease; /* Smooth background transition */
+}
+
+.user-icon {
+  position: relative;
+}
 </style>

@@ -1,9 +1,6 @@
 <template>
   <div class="login-background">
     <div class="login-container">
-      <router-link to="/" class="back-button">
-        <i class="fas fa-arrow-left"></i>
-      </router-link>
       <h1>Login</h1>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -29,14 +26,8 @@
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
         <button type="submit" :disabled="loading" class="login-button">
-          <span v-if="loading" class="loader"></span>
           {{ loading ? "Logging in..." : "Log In" }}
         </button>
-
-        <div class="remember-me">
-          <input type="checkbox" id="remember" v-model="rememberMe" />
-          <label for="remember">Remember Me</label>
-        </div>
       </form>
       <p class="signup-link">
         Don't have an account? <a href="/signup">Sign up</a>
@@ -56,7 +47,6 @@ export default {
       password: "",
       errorMessage: null,
       loading: false,
-      rememberMe: false,
     };
   },
   mounted() {
@@ -79,11 +69,7 @@ export default {
 
         if (response.data.message === "Login successful.") {
           const user = response.data.user;
-          if (this.rememberMe) {
-            localStorage.setItem("user", JSON.stringify(user));
-          } else {
-            sessionStorage.setItem("user", JSON.stringify(user));
-          }
+          localStorage.setItem("user", JSON.stringify(user));
           toast.success(`Welcome ${user.name || user.username}!`);
           this.$router.push("/profile");
         } else {
@@ -106,37 +92,23 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(45deg, #e3f2fd, #ffffff);
+  background: linear-gradient(45deg, #f5f5f5, #ffffff);
 }
 
 .login-container {
   width: 90%;
   max-width: 400px;
-  padding: 40px;
+  padding: 30px;
   background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
   text-align: center;
-  position: relative;
-}
-
-.back-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #42a5f5;
-  text-decoration: none;
-  font-size: 20px;
-}
-
-.back-button:hover {
-  color: #1e88e5;
 }
 
 h1 {
-  font-size: 30px;
-  margin-bottom: 30px;
-  font-family: 'Roboto', sans-serif;
+  font-size: 36px;
+  margin-bottom: 25px;
+  font-family: 'Arial', sans-serif;
   color: #333;
 }
 
@@ -146,60 +118,40 @@ h1 {
 
 .input-field {
   width: 100%;
-  padding: 15px;
-  border: 2px solid #cfd8dc;
-  border-radius: 10px;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
+  padding: 12px 15px;
+  border: 2px solid #dbdbdb;
+  border-radius: 8px;
+  box-sizing : border-box;
+  margin: 10px 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-field:focus {
-  border-color: #42a5f5;
+  border-color: #007bff;
   outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .login-button {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(45deg, #ff4081, #ff3d00);
+  background: linear-gradient(45deg, #fd1d1d, #833ab4);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
-  position: relative;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .login-button:hover {
-  background: #ff4081;
+  background: linear-gradient(45deg, #fd1d1d, #fd1d1d);
+  transform: translateY(-2px);
 }
 
 .login-button:disabled {
-  background-color: #bdbdbd;
-}
-
-.loader {
-  width: 24px;
-  height: 24px;
-  border: 4px solid white;
-  border-top: 4px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  position: absolute;
-  left: calc(50% - 12px);
-  top: calc(50% - 12px);
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.remember-me {
-  display: flex;
-  align-items: center;
-  margin: 15px 0;
+  background-color: #999;
 }
 
 .error {
@@ -210,7 +162,7 @@ h1 {
 .signup-link {
   margin-top: 15px;
   font-size: 14px;
-  color: #42a5f5;
+  color: #007bff;
 }
 
 .signup-link a {
