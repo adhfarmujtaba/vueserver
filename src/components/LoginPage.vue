@@ -1,6 +1,7 @@
 <template>
   <div class="login-background">
     <div class="login-container">
+      <button class="back-button" @click="goHome">🏠</button>
       <h1>Login</h1>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -56,6 +57,9 @@ export default {
     }
   },
   methods: {
+    goHome() {
+      this.$router.push("/"); // Navigate to home
+    },
     async login() {
       this.loading = true;
       this.errorMessage = null;
@@ -92,77 +96,93 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(45deg, #f5f5f5, #ffffff);
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  padding: 20px;
 }
 
 .login-container {
-  width: 90%;
+  width: 100%;
   max-width: 400px;
-  padding: 30px;
+  padding: 24px;
   background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 32px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
   text-align: center;
+  animation: fadeIn 2.2s ease; /* Fade-in animation for the container */
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 24px; /* Adjusted size for the home icon */
+  color: #1976d2; /* Color for the back button */
+  cursor: pointer;
+  margin-bottom: 16px; /* Space below the back button */
+  align-self: flex-start; /* Align to the left */
 }
 
 h1 {
-  font-size: 36px;
-  margin-bottom: 25px;
-  font-family: 'Arial', sans-serif;
+  font-size: 30px;
+  margin-bottom: 24px;
+  font-family: 'Roboto', sans-serif;
   color: #333;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .input-field {
   width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #dbdbdb;
-  border-radius: 8px;
-  box-sizing : border-box;
-  margin: 10px 0;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  padding: 14px;
+  border: 1px solid #b0bec5;
+  border-radius: 30px;
+  box-sizing: border-box;
+  margin: 8px 0;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+  font-size: 16px;
 }
 
 .input-field:focus {
-  border-color: #007bff;
+  border-color: #1976d2;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 8px rgba(25, 118, 210, 0.5);
+  transform: scale(1.02); /* Slightly enlarge on focus */
 }
 
 .login-button {
   width: 100%;
-  padding: 15px;
-  background: linear-gradient(45deg, #fd1d1d, #833ab4);
+  padding: 16px;
+  background: linear-gradient(45deg, #ff4081, #f50057);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .login-button:hover {
-  background: linear-gradient(45deg, #fd1d1d, #fd1d1d);
+  background: linear-gradient(45deg, #f50057, #ff4081);
   transform: translateY(-2px);
 }
 
 .login-button:disabled {
-  background-color: #999;
+  background-color: #cccccc;
 }
 
 .error {
-  color: red;
+  color: #d32f2f;
   margin-top: 10px;
+  font-size: 14px;
 }
 
 .signup-link {
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 14px;
-  color: #007bff;
+  color: #1976d2;
 }
 
 .signup-link a {
@@ -171,5 +191,17 @@ h1 {
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

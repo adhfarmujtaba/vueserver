@@ -2,7 +2,7 @@
   <div id="app">
     <SidebarComponent :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
     <div class="content-wrapper" :class="{ 'shifted': isMenuOpen }">
-      <Header v-if="!isLoginPage" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
+      <Header v-if="!isHeaderHidden" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
       <main>
         <transition name="slide-down-up" mode="out-in" appear>
           <router-view :key="$route.fullPath" />
@@ -33,8 +33,8 @@ export default {
     };
   },
   computed: {
-    isLoginPage() {
-      return this.$route.name === 'Login'; // Check if the current route is the login page
+    isHeaderHidden() {
+      return this.$route.name === 'Login' || this.$route.name === 'notifications'; // Check if the current route is the login page or notification page
     },
   },
   methods: {
