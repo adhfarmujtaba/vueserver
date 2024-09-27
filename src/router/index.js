@@ -4,6 +4,7 @@ import PostDetail from '../components/NewsDetail.vue'; // Adjust the path based 
 import CategoryList from '../components/CategoryList.vue'; // Import the CategoryList component
 import LoginPage from '../components/LoginPage.vue';
 import NotificationPage from '../components/NotificationPage.vue'; // Import the NotificationPage component
+import BookmarkPage from '../components/BookmarkPage.vue'; // Import the BookmarkPage component
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/notification',
     name: 'notifications', // Ensure this name matches the computed property check
     component: NotificationPage, // Add the new notification route
+  },
+  {
+    path: '/bookmark',
+    name: 'Bookmark',
+    component: BookmarkPage, // Add the new bookmark route
   },
 ];
 

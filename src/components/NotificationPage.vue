@@ -7,8 +7,7 @@
       <h1>Notifications</h1>
     </div>
 
-    <div v-if="loading" class="skeleton-loader">
-      <!-- Skeleton loader items -->
+    <div v-if="initialLoading" class="skeleton-loader">
       <div class="skeleton-item" v-for="n in 10" :key="n">
         <div class="skeleton-avatar"></div>
         <div class="skeleton-text">
@@ -18,9 +17,9 @@
       </div>
     </div>
 
-    <div v-if="!loading && notifications.length === 0" class="no-notifications">No notifications found.</div>
+    <div v-if="!initialLoading && notifications.length === 0" class="no-notifications">No notifications found.</div>
     
-    <ul v-if="!loading && notifications.length > 0">
+    <ul v-if="!initialLoading && notifications.length > 0">
       <li v-for="notification in notifications" :key="notification.id" class="notification-item">
         <div class="notification-user" v-if="notification.fromAvatar || notification.fromUsername">
           <img v-if="notification.fromAvatar" :src="notification.fromAvatar" alt="User Avatar" class="avatar" />
@@ -36,15 +35,14 @@
       </li>
     </ul>
 
-    <div v-if="loading && hasMore" class="spinner"></div> <!-- Spinner for loading more notifications -->
-
+    <div v-if="infiniteLoading && hasMore" class="spinner"></div>
     <div v-if="noMoreMessage" class="no-more-notifications">{{ noMoreMessage }}</div>
   </div>
-
 </template>
 
 <script>
 import axios from 'axios';
+import _ from 'lodash';
 import './notification.css';
 
 export default {
@@ -52,7 +50,8 @@ export default {
     return {
       userId: null,
       notifications: [],
-      loading: true,
+      initialLoading: true,  // For skeleton loader
+      infiniteLoading: false, // For infinite scroll spinner
       page: 1,
       perPage: 10,
       hasMore: true,
@@ -86,7 +85,6 @@ export default {
 
         if (Array.isArray(fetchedNotifications)) {
           this.notifications.push(...fetchedNotifications);
-
           if (fetchedNotifications.length < this.perPage) {
             this.hasMore = false;
             this.noMoreMessage = 'No more notifications available.';
@@ -102,7 +100,10 @@ export default {
       } catch (error) {
         console.error('Error fetching notifications:', error);
       } finally {
-        this.loading = false;
+        if (page === 1) {
+          this.initialLoading = false; // Hide skeleton loader after initial load
+        }
+        this.infiniteLoading = false; // Hide spinner after fetching more notifications
       }
     },
     async markAllAsRead() {
@@ -130,29 +131,28 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    handleScroll() {
+    handleScroll: _.debounce(function() {
       const scrollPosition = window.innerHeight + window.scrollY;
       const threshold = document.body.offsetHeight - 500;
 
-      if (scrollPosition >= threshold && !this.loading && this.hasMore) {
+      if (scrollPosition >= threshold && !this.infiniteLoading && this.hasMore) {
         this.page++;
-        this.loading = true;
+        this.infiniteLoading = true; // Show spinner for infinite loading
         this.fetchNotifications(this.page);
       }
-    },
+    }, 200),
   },
 };
 </script>
 
 <style scoped>
-/* Add spinner styles here */
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top: 4px solid #3498db;
   width: 30px;
   height: 30px;
-  position : relative;
+  position: relative;
   animation: spin 1s linear infinite;
   margin: 20px auto; /* Center the spinner */
 }

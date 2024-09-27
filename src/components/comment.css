@@ -1,0 +1,200 @@
+.custom-comment-modal {
+    display: flex;
+     justify-content: center;
+     align-items: flex-end; /* Align items to the bottom */
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.6);
+  
+    
+     transition: opacity 0.4s ease-in-out;
+     z-index: 99999;
+ }
+ 
+ .custom-modal-content {
+   background-color: #ffffff;
+   border-radius: 12px;
+   width: 100%;
+   max-width: 600px;
+   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+   display: flex;
+   height :400px;
+   flex-direction: column;
+   overflow: hidden;
+ }
+ 
+ .modal-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 15px;
+   border-bottom: 1px solid #efefef;
+ }
+ 
+ .modal-title {
+   font-size: 1.5rem;
+   margin: 0;
+   font-weight: 600;
+ }
+ 
+ .custom-close-button {
+   cursor: pointer;
+   font-size: 24px;
+ }
+ 
+ .modal-body {
+   flex-grow: 1;
+   padding: 10px 15px;
+   max-height: 400px; /* Limit the height of the comment section */
+   overflow-y: auto;
+ }
+ 
+ 
+ .custom-comment-item {
+   display: flex;
+   margin: 15px 0;
+ }
+ 
+ .custom-comment-avatar img {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+ }
+ 
+ .custom-comment-content {
+   flex-grow: 1;
+   margin-left: 10px;
+ }
+ 
+ .custom-comment-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+ }
+ 
+ .custom-comment-author {
+   color: #007bff;
+   font-weight: bold;
+   font-size: 14px;
+   text-decoration: none;
+ }
+ 
+ .custom-comment-date {
+   font-size: 12px;
+   color: #777;
+ }
+ 
+ .custom-comment-text {
+   margin-top: 5px;
+   color: #555;
+   font-size: 14px;
+   line-height: 1.5;
+ }
+ 
+ .custom-read-more-link {
+   color: #007bff;
+   cursor: pointer;
+   margin-left: 5px;
+   text-decoration: none;
+ }
+ 
+ .comment-input-container {
+   display: flex;
+   align-items: center;
+   padding: 15px;
+   background-color: #f9f9f9; /* Light background for input area */
+   border-top: 1px solid #efefef;
+ }
+ 
+ .custom-comment-input {
+   flex-grow: 1;
+   border: 1px solid #ddd;
+   border-radius: 8px;
+   padding: 10px;
+   margin-right: 10px;
+   font-size: 14px;
+   resize: none;
+   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .custom-post-button {
+   background-color: #007bff;
+   color: #ffffff;
+   border: none;
+   padding: 10px 15px;
+   border-radius: 8px;
+   cursor: pointer;
+   transition: background-color 0.2s, transform 0.1s;
+ }
+ 
+ .custom-post-button:hover {
+   background-color: #0056b3;
+ }
+ 
+ .custom-post-button:active {
+   transform: scale(0.95);
+ }
+ 
+ .custom-loading-spinner {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 50px; /* Adjust based on your layout */
+ }
+ 
+ .spinner {
+   border: 4px solid rgba(255, 255, 255, 0.3);
+   border-radius: 50%;
+   border-top: 4px solid #007bff; /* Spinner color */
+   width: 30px;
+   height: 30px;
+   animation: spin 1s linear infinite;
+ }
+ 
+ @keyframes spin {
+   0% { transform: rotate(0deg); }
+   100% { transform: rotate(360deg); }
+ }
+ .aly-loading-placeholder {
+    display: flex;
+    flex-direction: column;
+   
+  }
+  
+  .aly-loading-comment {
+    display: flex;
+    align-items: flex-start; /* Align items vertically */
+    gap: 10px; /* Space between avatar and details */
+    padding: 10px; /* Padding for each comment */
+    border-bottom: 1px solid #e0e0e0; /* Divider line */
+  }
+  
+  .aly-loading-avatar {
+    width: 40px; /* Width of the avatar */
+    height: 40px; /* Height of the avatar */
+    border-radius: 50%; /* Circular avatar */
+    background-color: #ccc; /* Placeholder color */
+  }
+  
+  .aly-loading-details {
+    flex: 1; /* Allow details to take up remaining space */
+  }
+  
+  .aly-loading-line {
+    height: 12px; /* Height for the loading lines */
+    border-radius: 4px; /* Slightly rounded corners */
+    background-color: #e0e0e0; /* Placeholder color */
+  }
+  
+  .aly-loading-name {
+    width: 60%; /* Width for the name line */
+    margin-bottom: 6px; /* Space below the name line */
+  }
+  
+  .aly-loading-message {
+    width: 80%; /* Width for the message line */
+  }
+  

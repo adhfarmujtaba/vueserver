@@ -78,6 +78,16 @@
     </div>
 
     <div class="interaction-icons">
+    <div v-if="loading" class="loading-skeleton-interaction">
+    <div class="loading-skeleton-icon"></div>
+    <div class="loading-skeleton-text"></div>
+    <div class="loading-skeleton-icon"></div>
+    <div class="loading-skeleton-text"></div>
+    <div class="loading-skeleton-icon"></div>
+    <div class="loading-skeleton-text"></div>
+  </div>
+  <div v-else>
+  <div class="interaction-icons">
   <div @click="toggleLike" id="like-btn" class="icon-container">
     <FontAwesomeIcon :icon="isLikedByUser ? ['fas', 'heart'] : ['far', 'heart']" :class="isLikedByUser ? 'liked' : ''" />
     <span>{{ likeCount }} Like{{ likeCount !== 1 ? 's' : '' }}</span>
@@ -86,10 +96,11 @@
         <FontAwesomeIcon icon="comment" />
         <span>{{ commentCount }} Comment{{ commentCount !== 1 ? 's' : '' }}</span>
       </div>
-  <div @click="handleBookmarkClick" class="icon-container">
-    <FontAwesomeIcon :icon="isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']" />
-    <span>{{ isBookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
-  </div>
+<div @click="handleBookmarkClick" class="icon-container">
+  <FontAwesomeIcon :icon="isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']" />
+  <span>{{ isBookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
+</div>
+
   <div @click="openShareModal" class="icon-container">
     <FontAwesomeIcon icon="share" />
     <span>Share</span>
@@ -125,8 +136,8 @@
     </div>
   </div>
 </div>
-
-
+</div>
+</div>
  <!-- Comment Modal -->
     <CommentModal 
       v-if="isCommentModalOpen" 
@@ -140,7 +151,7 @@
 
 <script>
 import axios from 'axios';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import Toastify from 'toastify-js'; // Import Toastify
@@ -168,6 +179,8 @@ export default {
     const isShareModalOpen = ref(false);
     const isCommentModalOpen = ref(false);
 
+    const intervalId = ref(null);
+
 
     const fetchPost = async () => {
       const postSlug = route.params.slug;
@@ -180,6 +193,7 @@ export default {
         await fetchTopViewedPosts();
         await fetchLikes();
         await fetchCommentCount();
+        await  fetchBookmarkStatus();
       } catch (error) {
         console.error("Error fetching post details:", error);
       } finally {
@@ -282,24 +296,46 @@ export default {
       isCommentModalOpen.value = false;
     };
 
-    const handleBookmarkClick = async () => {
-      const loggedInUser = localStorage.getItem('user');
-      if (!loggedInUser) {
-        showToast("Please log in to manage bookmarks");
-        return;
-      }
+const fetchBookmarkStatus = async () => {
+  if (post.value) {
+    const loggedInUser = localStorage.getItem('user');
+    if (!loggedInUser) {
+      isBookmarked.value = false; // Assume not bookmarked if user is not logged in
+      return;
+    }
 
-      const userId = JSON.parse(loggedInUser).id;
-      const action = isBookmarked.value ? 'delete' : 'add';
+    const userId = JSON.parse(loggedInUser).id;
 
-      try {
-        await axios.get(`https://blog.tourismofkashmir.com/api_bookmark.php?action=${action}&user_id=${userId}&post_id=${post.value.id}`);
-        isBookmarked.value = !isBookmarked.value;
-        showToast(isBookmarked.value ? "Bookmarked!" : "Bookmark removed.");
-      } catch (error) {
-        console.error("Error toggling bookmark:", error);
-      }
-    };
+    try {
+      const response = await axios.get(`https://blog.tourismofkashmir.com/api_bookmark.php?action=check&user_id=${userId}&post_id=${post.value.id}`);
+      isBookmarked.value = response.data && typeof response.data === 'string' && response.data.includes("Post is bookmarked");
+    } catch (error) {
+      console.error("Error checking bookmark status:", error);
+      isBookmarked.value = false; // Assume not bookmarked in case of error
+    }
+  }
+};
+
+
+   const handleBookmarkClick = async () => {
+  const loggedInUser = localStorage.getItem('user');
+  if (!loggedInUser) {
+    showToast("Please log in to manage bookmarks");
+    return;
+  }
+
+  const userId = JSON.parse(loggedInUser).id;
+  const action = isBookmarked.value ? 'delete' : 'add';
+
+  try {
+    await axios.get(`https://blog.tourismofkashmir.com/api_bookmark.php?action=${action}&user_id=${userId}&post_id=${post.value.id}`);
+    isBookmarked.value = !isBookmarked.value; // Toggle bookmark state
+    showToast(isBookmarked.value ? "Bookmarked!" : "Bookmark removed.");
+  } catch (error) {
+    console.error("Error toggling bookmark:", error);
+  }
+};
+
 
     const openShareModal = () => {
       isShareModalOpen.value = true;
@@ -371,10 +407,21 @@ const copyLink = () => {
 };
 
 
-    onMounted(() => {
-      fetchPost();
+ onMounted(() => {
+      fetchPost(); // Original fetchPost method to load post details
+      fetchLikes(); // Initial fetch for likes count
+      fetchCommentCount(); // Initial fetch for comment count
+
+      // Refresh both likes and comments every second
+      intervalId.value = setInterval(() => {
+        fetchLikes();
+        fetchCommentCount();
+      }, 1000);
     });
 
+    onBeforeUnmount(() => {
+      clearInterval(intervalId.value); // Clear the interval to prevent memory leaks
+    });
     watch(() => route.params.slug, () => {
       post.value = null; // Clear current post while loading new one
       fetchPost(); // Fetch the new post
@@ -403,6 +450,7 @@ const copyLink = () => {
       copyLink,
      openCommentModal,
       closeCommentModal,
+      fetchBookmarkStatus,
           };
   },
 };
@@ -523,5 +571,40 @@ const copyLink = () => {
     opacity: 1;
   }
 }
+
+.loading-skeleton-interaction {
+  display: flex;
+  gap: 40px; /* Space between icons */
+  align-items: center;
+}
+
+.loading-skeleton-icon {
+  width: 30px; /* Width for icon */
+  height: 30px; /* Height for icon */
+  background-color: #e0e0e0; /* Light gray background */
+  border-radius: 20%; /* Circular shape */
+  animation: pulse 1.5s infinite; /* Pulse animation */
+}
+
+.loading-skeleton-text {
+  width: 60px; /* Width for text */
+  height: 10px; /* Height for text */
+  background-color: #e0e0e0; /* Light gray background */
+  border-radius: 5px; /* Rounded corners */
+  animation: pulse 1.5s infinite; /* Pulse animation */
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #d0d0d0; /* Darker gray */
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+
 
 </style>
