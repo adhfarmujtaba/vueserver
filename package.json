@@ -1,11 +1,11 @@
 {
   "name": "my-vue-app",
   "version": "0.1.0",
-   "type": "module",
+  "type": "module",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vite build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -40,7 +40,8 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "vite": "^5.4.8"
   },
   "eslintConfig": {
     "root": true,
