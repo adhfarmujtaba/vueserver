@@ -89,23 +89,35 @@
   <div v-else>
   <div class="interaction-icons">
   <div @click="toggleLike" id="like-btn" class="icon-container">
-    <FontAwesomeIcon :icon="isLikedByUser ? ['fas', 'heart'] : ['far', 'heart']" :class="isLikedByUser ? 'liked' : ''" />
+    <FontAwesomeIcon 
+      :icon="isLikedByUser ? ['fas', 'heart'] : ['far', 'heart']" 
+      :class="['icon', isLikedByUser ? 'liked' : '']" 
+    />
     <span>{{ likeCount }} Like{{ likeCount !== 1 ? 's' : '' }}</span>
   </div>
-   <div @click="openCommentModal" class="icon-container">
-        <FontAwesomeIcon icon="comment" />
-        <span>{{ commentCount }} Comment{{ commentCount !== 1 ? 's' : '' }}</span>
-      </div>
-<div @click="handleBookmarkClick" class="icon-container">
-  <FontAwesomeIcon :icon="isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']" />
-  <span>{{ isBookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
-</div>
-
+  <div @click="openCommentModal" class="icon-container">
+    <FontAwesomeIcon 
+      icon="comment" 
+      class="icon" 
+    />
+    <span>{{ commentCount }} Comment{{ commentCount !== 1 ? 's' : '' }}</span>
+  </div>
+  <div @click="handleBookmarkClick" class="icon-container">
+    <FontAwesomeIcon 
+      :icon="isBookmarked ? ['fas', 'bookmark'] : ['far', 'bookmark']" 
+      class="icon" 
+    />
+    <span>{{ isBookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
+  </div>
   <div @click="openShareModal" class="icon-container">
-    <FontAwesomeIcon icon="share" />
+    <FontAwesomeIcon 
+      icon="share" 
+      class="icon" 
+    />
     <span>Share</span>
   </div>
 </div>
+
 
 <!-- Share Modal -->
 <div v-if="isShareModalOpen" class="share-modal" @click="closeShareModal">
@@ -606,5 +618,38 @@ const copyLink = () => {
   }
 }
 
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+  .share-modal {
+    background-color: rgba(0, 0, 0, 0.9); /* Darker background for the modal */
+  }
+
+  .modal-content {
+    background: #333; /* Dark background for modal content */
+    box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1); /* Lighter shadow for contrast */
+    color: #fff; /* White text for better visibility */
+  }
+
+  .close {
+    color: #fff; /* White close button for better visibility */
+  }
+
+  .share-option {
+    background-color: #444; /* Darker gray background for share options */
+    color: #fff; /* White text for share options */
+  }
+
+  .share-option:hover {
+    background-color: #555; /* Slightly lighter gray on hover */
+  }
+
+  .loading-skeleton-icon {
+    background-color: #555; /* Darker gray for loading icons */
+  }
+
+  .loading-skeleton-text {
+    background-color: #555; /* Darker gray for loading text */
+  }
+}
 
 </style>

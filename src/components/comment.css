@@ -110,23 +110,24 @@
  }
  
  .custom-comment-input {
-   flex-grow: 1;
-   border: 1px solid #ddd;
-   border-radius: 8px;
-   padding: 10px;
-   margin-right: 10px;
-   font-size: 14px;
-   resize: none;
-   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  border: 1px solid #ddd;
+  background-color: #e9ecef;
+  margin-right: 10px;
+  font-size: 14px;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 20px;
  }
  
  .custom-post-button {
    background-color: #007bff;
    color: #ffffff;
    border: none;
-   padding: 10px 15px;
-   border-radius: 8px;
+  
    cursor: pointer;
+   padding: 10px 15px;
+   border-radius: 20px;
    transition: background-color 0.2s, transform 0.1s;
  }
  
@@ -197,4 +198,72 @@
   .aly-loading-message {
     width: 80%; /* Width for the message line */
   }
-  
+
+  .custom-post-button:disabled {
+    background-color: #ccc; /* Disabled state color */
+    color: #666; /* Disabled text color */
+    cursor: not-allowed; /* Change cursor for disabled button */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #121212;
+        --modal-background: #1e1e1e;
+        --header-border: #333;
+        --link-color: #bb86fc;
+        --text-color: #e0e0e0;
+        --placeholder-color: #333;
+        --disabled-button-bg: #444;
+        --disabled-button-text: #888;
+        --loading-spinner-color: #bb86fc;
+        --comment-bg: #1c1c1c;
+        --comment-text-color: #ccc;
+        --comment-date-color: #aaa;
+    }
+
+    .custom-comment-modal {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .custom-modal-content {
+        background-color: var(--modal-background);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--header-border);
+    }
+
+    .custom-comment-input {
+        background-color: var(--placeholder-color);
+        border: 1px solid #555;
+    }
+
+    .custom-post-button {
+        background-color: var(--link-color);
+        color: #000000;
+    }
+
+    .custom-post-button:disabled {
+        background-color: var(--disabled-button-bg);
+        color: var(--disabled-button-text);
+    }
+
+    .custom-comment-text {
+        color: var(--comment-text-color);
+    }
+
+    .custom-comment-date {
+        color: var(--comment-date-color);
+    }
+
+    /* Loading Styles */
+    .spinner {
+        border-top: 4px solid var(--loading-spinner-color);
+    }
+    .modal-header {
+      color : #ffffff;
+    }
+    
+    .comment-input-container{
+      background-color: #2f2626;
+    }
+}

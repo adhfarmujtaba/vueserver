@@ -665,4 +665,77 @@ input:focus {
 .user-icon {
   position: relative;
 }
+@media (prefers-color-scheme: dark) {
+
+
+  .header {
+    background-color: #1e1e1e; /* Dark header background */
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); /* Light shadow */
+  }
+ .logo span {
+ 
+  color: #ffffff; /* Darker title color */
+}  
+
+
+  .category-tags {
+    background-color: #2a2a2a; /* Dark category tag background */
+    border-bottom: 1px solid #444; /* Darker border */
+  }
+
+  .category-tag {
+    background-color: #3a3a3a; /* Dark tag background */
+    color: #e0e0e0; /* Light text */
+  }
+
+  .category-tag:hover {
+    background-color: #0056b3; /* Hover color */
+    color: #fff; /* Hover text */
+  }
+
+  .modal-content {
+    background-color: #1e1e1e; /* Dark modal background */
+    color: #e0e0e0; /* Light text */
+  }
+
+  input {
+    background: transparent; /* Keep transparent */
+    color: #fff; /* Light input text */
+    border-bottom: 2px solid rgba(0, 123, 255, 0.5); /* Border color */
+  }
+
+  .search-results {
+    background-color: #1e1e1e; /* Dark search results background */
+  }
+
+  .search-results li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Light border */
+  }
+
+  .search-results li:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Hover effect */
+  }
+
+  .notification-icon {
+    color: white; /* Light notification icon */
+  }
+
+  .dropdown {
+    background: #1e1e1e; /* Dark dropdown background */
+    border: 1px solid #444; /* Dark border */
+  }
+
+  .dropdown-item {
+    color: #e0e0e0; /* Light text */
+  }
+
+  .dropdown-item:hover {
+    background: #333; /* Darker hover background */
+  }
+
+   .menu-icon span {
+    background-color: white; /* Change the span icon color to white */
+  }
+
+}
 </style>

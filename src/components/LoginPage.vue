@@ -75,7 +75,7 @@ export default {
           const user = response.data.user;
           localStorage.setItem("user", JSON.stringify(user));
           toast.success(`Welcome ${user.name || user.username}!`);
-          this.$router.push("/profile");
+          this.$router.push("/dashboard");
         } else {
           this.errorMessage = response.data.message;
         }

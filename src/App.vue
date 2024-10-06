@@ -2,10 +2,10 @@
   <div id="app">
     <SidebarComponent :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
     <div class="content-wrapper" :class="{ 'shifted': isMenuOpen }">
-      <Header v-if="!isHeaderHidden" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
+      <Header v-if="!isHeaderHidden && isOnline" :isMenuOpen="isMenuOpen" @toggleMenu="toggleMenu" />
       <main>
         <transition name="slide-down-up" mode="out-in" appear>
-          <router-view :key="$route.fullPath" />
+          <component :is="isOnline ? 'router-view' : 'NoInternetPage'" :key="$route.fullPath" />
         </transition>
         <div v-if="isPulling" class="pull-text">
           <i class="fas fa-arrow-down pull-icon"></i> Pull and release to refresh
@@ -19,28 +19,45 @@
 <script>
 import Header from './components/Header.vue';
 import SidebarComponent from './components/SidebarComponent.vue';
+import NoInternetPage from './components/NoInternetPage.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
     SidebarComponent,
+    NoInternetPage,
   },
   data() {
     return {
       isMenuOpen: false,
       isPulling: false,
+      isOnline: navigator.onLine, // Initial check for online status
     };
   },
   computed: {
     isHeaderHidden() {
-      return this.$route.name === 'Login' || this.$route.name === 'notifications'; // Check if the current route is the login page or notification page
+      // Hide header for Login, notifications, and dashboard
+      return ['Login', 'notifications', 'Dashboard'].includes(this.$route.name);
     },
   },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    updateOnlineStatus() {
+      this.isOnline = navigator.onLine; // Update the online status
+    },
+  },
+  mounted() {
+    // Event listeners for online/offline
+    window.addEventListener('online', this.updateOnlineStatus);
+    window.addEventListener('offline', this.updateOnlineStatus);
+  },
+  beforeUnmount() { // Updated from beforeDestroy to beforeUnmount
+    // Cleanup the event listeners
+    window.removeEventListener('online', this.updateOnlineStatus);
+    window.removeEventListener('offline', this.updateOnlineStatus);
   },
 };
 </script>

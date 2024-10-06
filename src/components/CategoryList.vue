@@ -1,5 +1,5 @@
 <template>
-  <div class="category-list">
+  <div class="category-list" @scroll="handleScroll">
     <div v-if="isLoading" class="skeleton-container">
       <div v-for="index in 10" :key="index" class="card skeleton-card">
         <div class="skeleton-image"></div>
@@ -15,8 +15,8 @@
       </div>
     </div>
 
-    <div v-else-if="isEmpty" class="empty-category-message">
-      <p>There are no posts in this category.</p>
+    <div v-if="isEmptyinitial" class="empty-category-message">
+      <p>There are no more posts in this category.</p>
     </div>
 
     <div v-else>
@@ -42,53 +42,87 @@
           <span class="date">{{ formatDate(post.created_at) }}</span>
         </div>
       </div>
+      <div v-if="isLoadingMore" class="loading-more" style="text-align: center; margin-top: 20px;">
+        <img src="https://blog.tourismofkashmir.com/kOnzy.gif" alt="Loading..." class="infinite-scroll-loader" />
+      </div>
+      <div v-if="isEmpty" class="empty-category-message">
+  <p> no more posts.</p>
+</div>
+
     </div>
   </div>
 </template>
+
 <script>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
+import debounce from 'lodash/debounce';
 
 export default {
   name: 'CategoryList',
   setup() {
     const categoryPosts = ref([]);
+    const isEmptyinitial = ref(false);
     const isEmpty = ref(false);
-    const isLoading = ref(true); // New loading state
+    const isLoading = ref(true);
+    const isLoadingMore = ref(false);
+    const canLoadMore = ref(true); // New variable to track loading status
     const route = useRoute();
-
-    const fetchCategoryPosts = async () => {
-      isLoading.value = true; // Start loading
+    const currentPage = ref(1);
+    
+    const fetchCategoryPosts = async (page = 1) => {
+      isLoading.value = page === 1; 
+      isLoadingMore.value = page > 1; 
       try {
         const categorySlug = route.params.categorySlug;
-        console.log("Current category slug:", categorySlug); // Log current slug
+        const response = await axios.get(`https://blog.tourismofkashmir.com/apis?category_slug=${categorySlug}&page=${page}`);
 
-        const response = await axios.get(`https://blog.tourismofkashmir.com/apis?category_slug=${categorySlug}`);
-        console.log("Fetched posts:", response.data); // Log the response
-
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          categoryPosts.value = response.data;
-          isEmpty.value = false;
-        } else {
-          isEmpty.value = true;
+        if (Array.isArray(response.data)) {
+          if (response.data.length > 0) {
+            if (page === 1) {
+              categoryPosts.value = response.data;
+            } else {
+              categoryPosts.value.push(...response.data);
+            }
+            isEmptyinitial.value = false; 
+          } else {
+            // If the response is an empty array for any page
+            if (page === 1) {
+              isEmptyinitial.value = true; 
+            } else {
+              isEmpty.value = true; 
+              canLoadMore.value = false; // No more posts to load
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching category posts:', error);
-        isEmpty.value = true;
       } finally {
-        isLoading.value = false; // Stop loading
+        isLoading.value = false; 
+        isLoadingMore.value = false; 
       }
     };
 
+    const handleScroll = debounce(() => {
+      const scrollableHeight = document.documentElement.scrollHeight;
+      const currentScroll = window.innerHeight + window.scrollY;
+
+      if (currentScroll >= scrollableHeight - 100 && !isLoading.value && !isLoadingMore.value && canLoadMore.value) {
+        currentPage.value++;
+        fetchCategoryPosts(currentPage.value);
+      }
+    }, 200);
+
     watch(() => route.params.categorySlug, () => {
-      categoryPosts.value = [];
-      isEmpty.value = false;
-      fetchCategoryPosts();
+      currentPage.value = 1; 
+      canLoadMore.value = true; // Reset loading status on category change
+      fetchCategoryPosts(); 
     });
 
     onMounted(() => {
       fetchCategoryPosts();
+      window.addEventListener('scroll', handleScroll);
     });
 
     // Utility functions
@@ -136,11 +170,33 @@ export default {
 
     return {
       categoryPosts,
+      isEmptyinitial,
       isEmpty,
-      isLoading, // Expose loading state
+      isLoading,
+      isLoadingMore,
       formatViews,
       formatDate,
     };
   },
 };
 </script>
+
+
+<style>
+.loading-more {
+  text-align: center;
+  padding: 10px;
+  font-size: 1.2rem;
+}
+.empty-category-message {
+  text-align: center;
+  padding: 10px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.infinite-scroll-loader {
+  width: 40px;
+  height: 40px;
+}
+</style>
